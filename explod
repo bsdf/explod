@@ -5,6 +5,15 @@ use warnings;
 
 use File::Find;
 
+my $dir = shift @ARGV;
+usage() if not $dir or not -d $dir;
+
+
+find({
+    wanted   => \&match,
+    no_chdir => 1,
+}, shift @ARGV );
+
 sub match {
     return if -d or not /\.pm$/;
     my $orig = $_;
@@ -13,7 +22,7 @@ sub match {
     symlink $orig, join "::", split /\//;
 }
 
-find({
-    wanted   => \&match,
-    no_chdir => 1,
-}, qw/lib/ );
+sub usage {
+    print( "no.\n" );
+    exit;
+}
