@@ -6,11 +6,11 @@ use warnings;
 use File::Find;
 
 sub match {
-	return if -d or not /\.pm$/;
-	my $orig = $_;
+    return if -d or not /\.pm$/;
+    my $orig = $_;
 
     s/lib\///;
-	symlink $orig, join "::", split /\//;
+    symlink $orig, join "::", split /\//;
 }
 
 find({
