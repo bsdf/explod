@@ -1,0 +1,19 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+use File::Find;
+
+sub match {
+	return if -d or not /\.pm$/;
+	my $orig = $_;
+
+    s/lib\///;
+	symlink $orig, join "::", split /\//;
+}
+
+find({
+    wanted   => \&match,
+    no_chdir => 1,
+}, qw/lib/ );
