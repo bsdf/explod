@@ -5,14 +5,18 @@ use warnings;
 
 use File::Find;
 
-my $dir = shift @ARGV;
-usage() if not $dir or not -d $dir;
+my $arg = shift @ARGV;
 
+undo() if $arg and $arg eq "--undo";
+usage() if not $arg or not -d $arg;
 
-find({
-    wanted   => \&match,
-    no_chdir => 1,
-}, shift @ARGV );
+find(
+    {
+        wanted   => \&match,
+        no_chdir => 1,
+    },
+    $arg
+);
 
 sub match {
     return if -d or not /\.pm$/;
@@ -22,7 +26,21 @@ sub match {
     symlink $orig, join "::", split /\//;
 }
 
+sub undo {
+    for (<*.pm>) {
+        unlink $_ if -l;
+    }
+    exit;
+}
+
 sub usage {
-    print( "no.\n" );
+    print <<USAGE;
+usage:  explod Path/To/Module
+            creates symlinks to pm files in path.
+
+        explod --undo
+            removes created symlinks
+USAGE
+
     exit;
 }
